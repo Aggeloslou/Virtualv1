@@ -1,0 +1,7 @@
+C:\LV3Plus.2.020.003\LiVirtualStock.dll
+C:\LV3Plus.2.020.003\LiVirtualStock.pdb
+C:\DEV\VIOZOKAT\LiVirtualStock\obj\Debug\LiVirtualStock.csproj.AssemblyReference.cache
+C:\DEV\VIOZOKAT\LiVirtualStock\obj\Debug\LiVirtualStock.csproj.CoreCompileInputs.cache
+C:\DEV\VIOZOKAT\LiVirtualStock\obj\Debug\LiVirtualStock.dll
+C:\DEV\VIOZOKAT\LiVirtualStock\obj\Debug\LiVirtualStock.pdb
+C:\DEV\VIOZOKAT\LiVirtualStock\obj\Debug\LiVirtua.B9C647D9.Up2Date
