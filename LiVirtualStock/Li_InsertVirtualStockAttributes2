@@ -1,0 +1,65 @@
+USE [Lvision]
+GO
+
+/****** Object:  StoredProcedure [dbo].[Li_InsertVirtualStockAttributes2]    Script Date: 27/9/2025 2:06:04 μμ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+ALTER   PROCEDURE [dbo].[Li_InsertVirtualStockAttributes2]        
+    @sav_StockID INT,
+    @ProductID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @attrCount INT;
+
+
+    SELECT @attrCount = COUNT(*)
+    FROM LV_ProductStockAttributes WITH (NOLOCK)
+    WHERE psa_ProductID = @ProductID;
+
+
+    DECLARE @firstSavID INT;
+
+    EXEC dbo.Li_GetNextID2
+         @seqfield = N'sav_ID',
+         @total    = @attrCount,
+         @result   = @firstSavID OUTPUT;
+
+    ;WITH Attributes AS
+    (
+        SELECT 
+            ROW_NUMBER() OVER (ORDER BY SA.sat_ID) - 1 AS rn,
+            SA.sat_ID,
+            AT.att_MessageCode
+        FROM LV_ProductStockAttributes PSA WITH (NOLOCK)  
+        INNER JOIN LV_StockAttributes SA WITH (NOLOCK) ON SA.sat_ID = PSA.psa_AttributeID
+        INNER JOIN LV_AttributeTypes AT WITH (NOLOCK) ON AT.att_ID = SA.sat_TypeID
+        WHERE PSA.psa_ProductID = @ProductID
+    )
+    SELECT 
+        @firstSavID + rn AS sav_ID,
+        @sav_StockID    as sav_StockID,
+        sat_ID          as sav_attributeID,
+        CASE 
+            WHEN att_MessageCode = 'ATTR_NUMERIC'  THEN '0'
+            WHEN att_MessageCode = 'ATTR_TEXT'     THEN '0'
+            WHEN att_MessageCode = 'ATTR_DATE'     THEN CONVERT(NVARCHAR(50), '2000-01-01', 120)
+            WHEN att_MessageCode = 'ATTR_BOOLEAN'  THEN '0'
+            WHEN att_MessageCode = 'ATTR_LIST'     THEN '01'
+            WHEN att_MessageCode = 'ATTR_DATETIME' THEN CONVERT(NVARCHAR(50), '2000-01-01 01:00:00', 120)
+            WHEN att_MessageCode = 'ATTR_TIME'     THEN CONVERT(NVARCHAR(50), '01:00:00', 108) 
+        END AS sav_Value,
+        1 AS DomainID
+    FROM Attributes;
+
+END
+GO
+
+
